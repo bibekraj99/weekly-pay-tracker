@@ -51,5 +51,12 @@ function calculateWeeklyPay() {
     document.getElementById("weeklyPayOutput").value = totalPay.toFixed(2);
 }
 
+// Clear all data
+function clearData() {
+    localStorage.clear(); // Clear all stored data
+    alert("All data cleared!");
+    location.reload(); // Reload the app to reset fields
+}
+
 // Initialize the app
 initializeWeek();
