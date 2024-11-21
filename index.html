@@ -7,21 +7,23 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Weekly Pay Tracker</h1>
-        <div class="form-group">
-            <label for="payRateInput">Pay Rate ($):</label>
-            <input type="number" id="payRateInput" placeholder="Enter hourly pay rate" value="14" onchange="updatePayRate()">
-        </div>
-        <div id="daysContainer"></div>
-        <div class="form-group">
-            <button onclick="calculateWeeklyPay()">Calculate Weekly Pay</button>
-        </div>
-        <div class="form-group">
-            <label for="weeklyPayOutput">Total Weekly Pay ($):</label>
-            <input type="text" id="weeklyPayOutput" readonly>
-        </div>
+    <h1>Weekly Pay Tracker</h1>
+
+    <div id="daysContainer"></div>
+
+    <div class="form-group">
+        <label for="payRateInput">Pay Rate ($ per hour):</label>
+        <input type="number" id="payRateInput" min="0" placeholder="Enter pay rate" value="14" onchange="updatePayRate()">
     </div>
+
+    <div class="form-group">
+        <label for="weeklyPayOutput">Weekly Pay ($):</label>
+        <input type="text" id="weeklyPayOutput" readonly>
+    </div>
+
+    <button onclick="calculateWeeklyPay()">Calculate Weekly Pay</button>
+    <button onclick="clearData()">Clear All Data</button>
+
     <script src="script.js"></script>
 </body>
 </html>
