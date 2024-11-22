@@ -122,7 +122,6 @@ function updateHistory() {
     });
 }
 
-// View a specific week's data
 function viewWeek(index) {
     const week = history[index];
     weeklyData = week.hours; // Load hours for the selected week
