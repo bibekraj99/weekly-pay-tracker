@@ -2,13 +2,14 @@
 let weeklyData = {}; // Object to store weekly data
 let payRate = 14; // Default pay rate
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const startDate = new Date(); // Starting date of the week
 
 // Load saved weekly data from localStorage
 function loadWeeklyData() {
     const savedData = localStorage.getItem("weeklyData");
     if (savedData) {
         weeklyData = JSON.parse(savedData);
+    } else {
+        weeklyData = {}; // Initialize empty if no data
     }
 }
 
@@ -20,7 +21,7 @@ function storeDayData(date) {
 }
 
 // Initialize the weekly inputs and pre-fill saved data
-function initializeWeek() {
+function initializeWeek(startDate) {
     const daysContainer = document.getElementById("daysContainer");
     daysContainer.innerHTML = ""; // Clear previous inputs
 
@@ -38,15 +39,10 @@ function initializeWeek() {
             </div>
         `;
     });
-
-    // Load saved pay rate
-    const savedPayRate = localStorage.getItem("payRate") || "14";
-    payRate = parseFloat(savedPayRate);
-    document.getElementById("payRateInput").value = savedPayRate;
 }
 
 // Update calendar for the current week
-function updateCalendar() {
+function updateCalendar(startDate) {
     const calendar = document.getElementById("calendar");
     const weekDates = [];
 
@@ -59,8 +55,15 @@ function updateCalendar() {
     calendar.textContent = `Week Starting: ${weekDates[0]} - ${weekDates[6]}`;
 }
 
-// Update the total hours and earnings
-function updateHistory() {
+// Update pay rate and save to localStorage
+function updatePayRate() {
+    const payRateInput = document.getElementById("payRateInput").value;
+    payRate = parseFloat(payRateInput) || 14; // Default to 14 if invalid
+    localStorage.setItem("payRate", payRate); // Save pay rate
+}
+
+// Update total hours and earnings
+function calculateWeeklyPay() {
     let totalHours = 0;
 
     for (const date in weeklyData) {
@@ -68,20 +71,52 @@ function updateHistory() {
     }
 
     const totalEarnings = (totalHours * payRate).toFixed(2);
-    document.getElementById("totalHours").textContent = `Total Hours: ${totalHours}`;
-    document.getElementById("totalEarnings").textContent = `Total Earnings: $${totalEarnings}`;
+    document.getElementById("weeklyPayOutput").value = `$${totalEarnings}`;
 }
 
-// Update pay rate and save to localStorage
-function updatePayRate() {
-    const payRateInput = document.getElementById("payRateInput").value;
-    payRate = parseFloat(payRateInput) || 14; // Default to 14 if invalid
-    localStorage.setItem("payRate", payRate); // Save pay rate
-    updateHistory();
+// Clear data for the current week
+function clearData() {
+    if (confirm("Are you sure you want to clear the current week's input?")) {
+        const inputs = document.querySelectorAll("#daysContainer input");
+        inputs.forEach((input) => {
+            input.value = "";
+            const date = input.id;
+            delete weeklyData[date];
+        });
+        localStorage.setItem("weeklyData", JSON.stringify(weeklyData)); // Update localStorage
+        calculateWeeklyPay();
+    }
+}
+
+// Clear all data (history and current week)
+function clearAllHistory() {
+    if (confirm("Are you sure you want to clear all saved data?")) {
+        localStorage.clear();
+        weeklyData = {};
+        initializeWeek(new Date());
+        calculateWeeklyPay();
+    }
+}
+
+// Set the week range based on the selected start date
+function updateWeekRange() {
+    const startDateInput = document.getElementById("startDate").value;
+    if (startDateInput) {
+        const startDate = new Date(startDateInput);
+        updateCalendar(startDate);
+        initializeWeek(startDate);
+    }
 }
 
 // Initialize the app
-loadWeeklyData(); // Load saved weekly data
-updateCalendar();
-initializeWeek();
-updateHistory();
+document.addEventListener("DOMContentLoaded", () => {
+    loadWeeklyData(); // Load saved data
+    const savedPayRate = localStorage.getItem("payRate");
+    payRate = savedPayRate ? parseFloat(savedPayRate) : 14;
+    document.getElementById("payRateInput").value = payRate;
+
+    const currentWeekStart = new Date();
+    currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay()); // Set to Sunday
+    updateCalendar(currentWeekStart);
+    initializeWeek(currentWeekStart);
+});
