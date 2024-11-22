@@ -6,16 +6,16 @@ const startDate = new Date(); // Starting date of the week
 
 // Load saved weekly data from localStorage
 function loadWeeklyData() {
-    const savedData = JSON.parse(localStorage.getItem("weeklyData"));
+    const savedData = localStorage.getItem("weeklyData");
     if (savedData) {
-        weeklyData = savedData;
+        weeklyData = JSON.parse(savedData);
     }
 }
 
 // Store data for a specific day and save to localStorage
 function storeDayData(date) {
     const hoursInput = document.getElementById(date).value;
-    weeklyData[date] = parseFloat(hoursInput) || 0;
+    weeklyData[date] = parseFloat(hoursInput) || 0; // Store hours for the given date
     localStorage.setItem("weeklyData", JSON.stringify(weeklyData)); // Save to localStorage
 }
 
@@ -27,8 +27,10 @@ function initializeWeek() {
     daysOfWeek.forEach((day, index) => {
         const currentDate = new Date(startDate);
         currentDate.setDate(startDate.getDate() + index);
-        const dateString = currentDate.toISOString().split("T")[0];
-        const savedHours = weeklyData[dateString] || ''; // Load saved hours from weeklyData
+        const dateString = currentDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+
+        // Load saved hours for this date
+        const savedHours = weeklyData[dateString] !== undefined ? weeklyData[dateString] : '';
         daysContainer.innerHTML += `
             <div class="form-group">
                 <label for="${dateString}">${day} (${dateString}) Hours:</label>
@@ -57,7 +59,7 @@ function updateCalendar() {
     calendar.textContent = `Week Starting: ${weekDates[0]} - ${weekDates[6]}`;
 }
 
-// Update the total and earnings
+// Update the total hours and earnings
 function updateHistory() {
     let totalHours = 0;
 
@@ -74,7 +76,7 @@ function updateHistory() {
 function updatePayRate() {
     const payRateInput = document.getElementById("payRateInput").value;
     payRate = parseFloat(payRateInput) || 14; // Default to 14 if invalid
-    localStorage.setItem("payRate", payRate);
+    localStorage.setItem("payRate", payRate); // Save pay rate
     updateHistory();
 }
 
