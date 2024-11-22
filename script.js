@@ -223,6 +223,21 @@ function updateHistory() {
     });
 }
 
+// Load saved weekly data from localStorage
+function loadWeeklyData() {
+    const savedData = JSON.parse(localStorage.getItem("weeklyData"));
+    if (savedData) {
+        weeklyData = savedData;
+    }
+}
+
+// Store data for a specific day and save to localStorage
+function storeDayData(date) {
+    const hoursInput = document.getElementById(date).value;
+    weeklyData[date] = parseFloat(hoursInput) || 0;
+    localStorage.setItem("weeklyData", JSON.stringify(weeklyData)); // Save to localStorage
+}
+
 
 // Initialize the app
 updateCalendar();
