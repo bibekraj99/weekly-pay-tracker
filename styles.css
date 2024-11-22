@@ -159,3 +159,16 @@ footer {
     color: #555;
     font-size: 16px;
 }
+
+/* Responsive styling for mobile screens */
+@media screen and (max-width: 768px) {
+    #daysContainer {
+        grid-template-columns: 1fr; /* Stack items vertically on smaller screens */
+    }
+}
+
+/* Ensure input fields and buttons are responsive */
+input[type="number"], input[type="text"], button {
+    width: 100%;
+    max-width: 100%; /* Ensure full width on small screens */
+}
